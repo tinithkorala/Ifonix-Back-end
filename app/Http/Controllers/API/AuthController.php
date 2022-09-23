@@ -14,7 +14,7 @@ class AuthController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|min:3|max:20|string',
-            'email' => 'required|string|unique:users,email',
+            'email' => 'required|email|string|unique:users,email',
             'password' => 'required|string|confirmed|min:3'
         ]);
 
@@ -27,6 +27,32 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Data saved !',
         ], 201);
+
+    }
+
+    public function login(Request $request) {
+
+        $validated = $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string'
+        ]);
+
+        // check user
+        $user_obj = User::where('email', $validated['email'])->first();
+
+        if($user_obj && Hash::check($validated['password'], $user_obj->password)) {
+
+            return response()->json([
+                'message' => 'User authenticated !',
+            ], 201);
+
+        }else {
+
+            return response()->json([
+                'message' => 'Bad credentials !!!',
+            ], 201);
+
+        }
 
     }
 
