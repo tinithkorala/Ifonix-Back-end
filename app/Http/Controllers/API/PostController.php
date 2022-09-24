@@ -26,6 +26,7 @@ class PostController extends Controller
     public function store(Request $request) {
 
         $user_id = Auth::id();
+        $is_admin = Auth::user()->is_admin;
         
         $validator = Validator::make($request->all(), [
             'title' => 'required',
@@ -46,7 +47,7 @@ class PostController extends Controller
             $post_obj = Post::create([
                 'title' => $validated['title'],
                 'description' => $validated['description'],
-                'is_approved' => false,
+                'is_approved' => $is_admin ? true : false,
                 'user_id' => $user_id
             ]);
 
