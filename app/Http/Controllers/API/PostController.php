@@ -13,7 +13,7 @@ class PostController extends Controller
 
     public function index() {
 
-        $posts = Post::all();
+        $posts = Post::where('is_approved', true)->get();
 
         if($posts) {
 
