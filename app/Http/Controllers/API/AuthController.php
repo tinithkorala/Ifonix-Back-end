@@ -67,27 +67,70 @@ class AuthController extends Controller
 
     public function login(Request $request) {
 
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(),[
             'email' => 'required|string|email',
             'password' => 'required|string'
         ]);
 
-        // check user
-        $user_obj = User::where('email', $validated['email'])->first();
-
-        if($user_obj && Hash::check($validated['password'], $user_obj->password)) {
+        if($validator->fails()) {
 
             return response()->json([
-                'message' => 'User authenticated !',
-            ], 201);
+                'status' => 400,
+                'validation_errors' => $validator->messages(),
+            ]);
 
         }else {
 
-            return response()->json([
-                'message' => 'Bad credentials !!!',
-            ], 201);
+            try {
+                
+                $validated = $validator->validated();
+
+                // check user
+                $user_obj = User::where('email', $validated['email'])->first();
+
+                if($user_obj && Hash::check($validated['password'], $user_obj->password)) {
+
+                    $user_token_string = $user_obj->createToken($user_obj->email.'_Token')->plainTextToken;
+
+                    return response()->json([
+                        'status' => 200,
+                        'user_name' => $user_obj->name,
+                        'token' => $user_token_string,
+                        'message' => 'Logged in Successfully !',
+                    ]);
+        
+                }else {
+        
+                    return response()->json([
+                        'status' => 401,
+                        'message' => 'Bad credentials !!!',
+                    ]);
+        
+                }
+
+            } catch (\Exception $e) {
+
+                Log::error($e);
+
+                return response()->json([
+                    'status' => 500,
+                    'message' => 'Something went wrong',
+                ]);
+
+            }
 
         }
+
+    }
+
+    public function logout() {
+
+        auth()->user()->tokens()->delete();
+        
+        return response()->json([
+            'status' => 200,
+            'message' => 'Logged Out Successfully'
+        ]);
 
     }
 
