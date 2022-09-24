@@ -8,6 +8,7 @@ use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -29,22 +30,36 @@ class AuthController extends Controller
 
         }else {
 
-            $validated = $validator->validated();
+            try {
+                $validated = $validator->validated();
 
-            $user_obj = User::create([
-                'name'      => $validated['name'],  
-                'email'     => $validated['email'],
-                'password'  => Hash::make($validated['password']),
-            ]);
-
-            $user_token_string = $user_obj->createToken($user_obj->email.'_Token')->plainTextToken;
+                $user_obj = User::create([
+                    'name'      => $validated['name'],  
+                    'email'     => $validated['email'],
+                    'password'  => Hash::make($validated['password']),
+                ]);
     
-            return response()->json([
-                'status' => 201,
-                'user_name' => $user_obj->name,
-                'token' => $user_token_string,
-                'message' => 'User Registered Successfully !',
-            ]);
+                $user_token_string = $user_obj->createToken($user_obj->email.'_Token')->plainTextToken;
+        
+                return response()->json([
+                    'status' => 201,
+                    'user_name' => $user_obj->name,
+                    'token' => $user_token_string,
+                    'message' => 'User Registered Successfully !',
+                ]);
+
+            }catch(\Exception $e) {
+
+                Log::error($e);
+
+                return response()->json([
+                    'status' => 500,
+                    'message' => 'Something went wrong',
+                ]);
+
+            }
+
+            
 
         }
 
