@@ -27,6 +27,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/posts', [PostController::class, 'index']);
+    Route::get('/posts-approve-reject', [PostController::class, 'postsForApproveReject']);
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts-manage', [PostController::class, 'postApproveRejected']);
 

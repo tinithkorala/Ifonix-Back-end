@@ -15,11 +15,17 @@ class PostController extends Controller
     public function index() {
 
         $posts = Post::where('is_approved', true)->get();
-
         if($posts) {
-
             return response()->json($posts, 200);
+        }
 
+    }
+
+    public function postsForApproveReject() {
+
+        $posts = Post::where('is_approved', false)->where('rejected_at', NULL)->get();
+        if($posts) {
+            return response()->json($posts, 200);
         }
 
     }
@@ -64,11 +70,6 @@ class PostController extends Controller
     public function postApproveRejected(Request $request) {
 
         $post_id = $request->input('post_id'); 
-
-        // return response()->json([
-        //     'status' => 200,
-        //     'post_id' => $post_id
-        // ]);
 
         $user_id = Auth::id();
         $is_admin = Auth::user()->is_admin;
