@@ -43,6 +43,7 @@ class AuthController extends Controller
         
                 return response()->json([
                     'status' => 201,
+                    'user_id' => $user_obj->id,
                     'user_name' => $user_obj->name,
                     'auth_user_type' => $user_obj->is_admin,
                     'token' => $user_token_string,
@@ -93,6 +94,7 @@ class AuthController extends Controller
 
                     return response()->json([
                         'status' => 200,
+                        'user_id' => $user_obj->id,
                         'user_name' => $user_obj->name,
                         'auth_user_type' => $user_obj->is_admin,
                         'token' => $user_token_string,
