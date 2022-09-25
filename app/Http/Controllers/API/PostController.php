@@ -119,6 +119,22 @@ class PostController extends Controller
 
         }
 
+    }
+
+    public function show($id) {
+
+        $post = Post::find($id);
+
+        if($post) {
+            return response()->json($post);
+        }
+
+    }
+
+    public function destroy($id) {
+
+        $post_delete = Post::find($id)->delete();
+        return $post_delete;
 
     }
 

@@ -31,6 +31,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts-manage', [PostController::class, 'postApproveRejected']);
     Route::get('/posts/search', [PostController::class, 'search']);
+    Route::get('/posts/{id}', [PostController::class, 'show']);
+    Route::delete('/posts/{id}', [PostController::class, 'destroy']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
