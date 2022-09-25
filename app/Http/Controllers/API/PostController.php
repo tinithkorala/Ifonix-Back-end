@@ -102,6 +102,26 @@ class PostController extends Controller
 
     }
 
+    public function search() {
+
+        $posts = Post::latest()->where('is_approved', true)->filter(request(['search']))->get();
+
+        if($posts) {
+
+            return response()->json($posts); 
+
+        }else {
+
+            return response()->json([
+                'status' => 400,
+                'message' => 'Bad method'
+            ]); 
+
+        }
+
+
+    }
+
 
 
 }

@@ -30,6 +30,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/posts-approve-reject', [PostController::class, 'postsForApproveReject']);
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts-manage', [PostController::class, 'postApproveRejected']);
+    Route::get('/posts/search', [PostController::class, 'search']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 

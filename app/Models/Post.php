@@ -11,5 +11,16 @@ class Post extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = ['title', 'description', 'is_approved', 'user_id'];
+
+    public function scopeFilter($query, $filters) {
+
+        if($filters['search'] ?? false) {
+
+            $query->where('title', 'like', '%'.request('search').'%')
+                ->orWhere('description', 'like', '%'.request('search').'%');
+
+        }
+
+    }
     
 }
