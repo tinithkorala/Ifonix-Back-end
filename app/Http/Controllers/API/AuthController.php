@@ -44,6 +44,7 @@ class AuthController extends Controller
                 return response()->json([
                     'status' => 201,
                     'user_name' => $user_obj->name,
+                    'auth_user_type' => $user_obj->is_admin,
                     'token' => $user_token_string,
                     'message' => 'User Registered Successfully !',
                 ]);
@@ -58,8 +59,6 @@ class AuthController extends Controller
                 ]);
 
             }
-
-            
 
         }
 
@@ -95,6 +94,7 @@ class AuthController extends Controller
                     return response()->json([
                         'status' => 200,
                         'user_name' => $user_obj->name,
+                        'auth_user_type' => $user_obj->is_admin,
                         'token' => $user_token_string,
                         'message' => 'Logged in Successfully !',
                     ]);
