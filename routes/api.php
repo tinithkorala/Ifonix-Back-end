@@ -16,23 +16,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+
 
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
 
+// public routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
+// protected_routes
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::get('/posts', [PostController::class, 'index']);
-    Route::get('/posts-approve-reject', [PostController::class, 'postsForApproveReject']);
-    Route::post('/posts', [PostController::class, 'store']);
-    Route::put('/posts-manage', [PostController::class, 'postApproveRejected']);
     Route::get('/posts/search', [PostController::class, 'search']);
+
+    Route::get('/posts', [PostController::class, 'index']);
+    Route::post('/posts', [PostController::class, 'store']);
+    Route::put('/posts/{id}', [PostController::class, 'update']);
     Route::get('/posts/{id}', [PostController::class, 'show']);
     Route::delete('/posts/{id}', [PostController::class, 'destroy']);
+
+    Route::get('/posts-approve-reject', [PostController::class, 'postsForApproveReject']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
