@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostController extends Controller
 {   
@@ -104,7 +105,15 @@ class PostController extends Controller
 
     public function search() {
 
-        $posts = Post::latest()->where('is_approved', true)->filter(request(['search']))->get();
+        // $posts = Post::latest()->where('is_approved', true)->filter(request(['search']))->get();
+
+        $searchString = request('search');
+
+        $posts = Post::whereHas('user', function (Builder $query) use ($searchString) {
+            $query->where('title', 'like', '%'.$searchString.'%');
+            $query->orWhere('description', 'like', '%'.$searchString.'%');
+            $query->orWhere('name', 'like', '%'.$searchString.'%');
+        })->get();
 
         if($posts) {
 
@@ -124,6 +133,7 @@ class PostController extends Controller
     public function show($id) {
 
         $post = Post::find($id);
+        // $post = Post::find($id)->user()->get();
 
         if($post) {
             return response()->json($post);
