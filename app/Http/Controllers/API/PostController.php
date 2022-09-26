@@ -157,8 +157,27 @@ class PostController extends Controller
 
     public function destroy($id) {
 
-        $post_delete = Post::find($id)->delete();
-        return $post_delete;
+        try {
+
+            $post_delete = Post::find($id)->delete();
+
+            return response()->json([
+                'status' => 201,
+                'message' => 'Post Deleted'
+            ]); 
+       
+        } catch (\Exception $e) {
+            
+            Log::error($e);
+
+            return response()->json(
+                [
+                    'status' => 503,
+                    'message' => '503 Service Unavailable'
+                ],
+            );
+
+        }
 
     }
 
