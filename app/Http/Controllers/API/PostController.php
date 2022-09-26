@@ -171,27 +171,39 @@ class PostController extends Controller
 
     public function search() {
 
-        // $posts = Post::latest()->where('is_approved', true)->filter(request(['search']))->get();
+        try {
 
-        $searchString = request('search');
+            // $posts = Post::latest()->where('is_approved', true)->filter(request(['search']))->get();
 
-        $posts = Post::whereHas('user', function (Builder $query) use ($searchString) {
-            $query->where('title', 'like', '%'.$searchString.'%');
-            $query->orWhere('description', 'like', '%'.$searchString.'%');
-            $query->orWhere('name', 'like', '%'.$searchString.'%');
-        })->get();
+            $searchString = request('search');
+            $posts = Post::whereHas('user', function (Builder $query) use ($searchString) {
+                $query->where('title', 'like', '%'.$searchString.'%');
+                $query->orWhere('description', 'like', '%'.$searchString.'%');
+                $query->orWhere('name', 'like', '%'.$searchString.'%');
+            })->get();
 
-        if($posts) {
+            if($posts) {
 
-            return response()->json($posts); 
+                return response()->json(
+                [
+                    'status' => 200,
+                    'message' => 'Posts Found',
+                    'data_set' => $posts
+                ]); 
 
-        }else {
+            }
 
-            return response()->json([
-                'status' => 400,
-                'message' => 'Bad method'
-            ]); 
+        }catch (\Exception $e) {
 
+            Log::error($e);
+
+            return response()->json(
+                [
+                    'status' => 503,
+                    'message' => '503 Service Unavailable'
+                ],
+            );
+         
         }
 
     }
