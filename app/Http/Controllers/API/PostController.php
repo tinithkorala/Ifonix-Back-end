@@ -15,10 +15,28 @@ class PostController extends Controller
 {   
 
     public function index() {
+       
+        try {
 
-        $posts = Post::where('is_approved', true)->get();
-        if($posts) {
-            return response()->json($posts, 200);
+            $posts = Post::where('is_approved', true)->get();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Post all',
+                'data_set' => $posts
+            ]); 
+        
+        } catch (\Exception $e) {
+            
+            Log::error($e);
+        
+            return response()->json(
+                [
+                    'status' => 503,
+                    'message' => '503 Service Unavailable'
+                ],
+            );
+        
         }
 
     }
@@ -145,12 +163,30 @@ class PostController extends Controller
     }
 
     public function show($id) {
+        
+        try {
 
-        $post = Post::find($id);
-        // $post = Post::find($id)->user()->get();
+            $post = Post::find($id);
+            // $post = Post::find($id)->user()->get();
 
-        if($post) {
-            return response()->json($post);
+            return response()->json(
+            [
+                'status' => 200,
+                'message' => 'Post Found',
+                'data_set' => $post
+            ]); 
+        
+        } catch (\Exception $e) {
+            
+            Log::error($e);
+        
+            return response()->json(
+                [
+                    'status' => 503,
+                    'message' => '503 Service Unavailable'
+                ],
+            );
+        
         }
 
     }
