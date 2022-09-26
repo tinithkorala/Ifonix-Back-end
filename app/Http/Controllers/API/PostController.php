@@ -43,9 +43,27 @@ class PostController extends Controller
 
     public function postsForApproveReject() {
 
-        $posts = Post::where('is_approved', false)->where('rejected_at', NULL)->get();
-        if($posts) {
-            return response()->json($posts, 200);
+        try {
+
+            $posts = Post::where('is_approved', false)->where('rejected_at', NULL)->get();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Posts that need permission',
+                'data_set' => $posts
+            ]); 
+        
+        } catch (\Exception $e) {
+            
+            Log::error($e);
+        
+            return response()->json(
+                [
+                    'status' => 503,
+                    'message' => '503 Service Unavailable'
+                ],
+            );
+        
         }
 
     }
@@ -111,25 +129,41 @@ class PostController extends Controller
         if($is_admin) {
 
             $post_approve_reject_status = $request->input('post_approve_reject_status'); 
-
             $tbl_column = $post_approve_reject_status ? "approved_at" : "rejected_at";
 
-            $post = Post::find($id);
-            $post->is_approved = $post_approve_reject_status;
-            $post->$tbl_column = Carbon::now()->toDateTimeString(); 
-            $post->update();
+            try {
 
-            return response()->json([
-                'status' => 200,
-                'message' => 'Post Updated'
-            ]);
+                $post = Post::find($id);
+                $post->is_approved = $post_approve_reject_status;
+                $post->$tbl_column = Carbon::now()->toDateTimeString(); 
+                $post->update();
+
+                return response()->json([
+                    'status' => 201,
+                    'message' => $post_approve_reject_status ? "Post Approved" : "Post Rejected"
+                ]);
+
+            }catch (\Exception $e) {
+
+                Log::error($e);
+
+                return response()->json(
+                    [
+                        'status' => 503,
+                        'message' => '503 Service Unavailable'
+                    ],
+                );
+             
+            }
 
         }else {
 
-            return response()->json([
-                'status' => 400,
-                'message' => 'Bad method'
-            ]); 
+            return response()->json(
+                [
+                    'status' => 503,
+                    'message' => '503 Service Unavailable'
+                ],
+            );
 
         }
 
