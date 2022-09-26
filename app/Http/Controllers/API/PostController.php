@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {   
@@ -44,7 +45,7 @@ class PostController extends Controller
         if($validator->fails()) {
 
             return response()->json([
-                'status' => 400,
+                'status' => 204,
                 'validation_errors' => $validator->messages(),
             ]);
 
@@ -52,17 +53,34 @@ class PostController extends Controller
 
             $validated = $validator->validate();
 
-            $post_obj = Post::create([
-                'title' => $validated['title'],
-                'description' => $validated['description'],
-                'is_approved' => $is_admin ? true : false,
-                'user_id' => $user_id
-            ]);
+            try {
 
-            return response()->json([
-                'status' => 200,
-                'message' => 'Post Created'
-            ]);
+                $post_obj = Post::create([
+                    'title' => $validated['title'],
+                    'description' => $validated['description'],
+                    'is_approved' => $is_admin ? true : false,
+                    'user_id' => $user_id
+                ]);
+
+                return response()->json(
+                    [
+                        'status' => 201,
+                        'message' => 'Post Created'
+                    ],
+                );
+          
+            } catch (\Exception $e) {
+
+                Log::error($e);
+
+                return response()->json(
+                    [
+                        'status' => 503,
+                        'message' => '503 Service Unavailable'
+                    ],
+                );
+             
+            }
 
         }
         
