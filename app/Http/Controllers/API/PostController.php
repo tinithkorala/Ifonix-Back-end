@@ -13,7 +13,24 @@ use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {   
-
+    
+    /**
+    *  @OA\Get(
+    *      path="/api/posts",
+    *      summary="Get All posts",
+    *      operationId="index",
+    *      tags={"Post Manage"},
+    *      security={{"sanctum":{}}},
+    *      @OA\Response(
+    *          response=200,
+    *          description="Post Fetching"
+    *      ),
+    *      @OA\Response(
+    *          response="default",
+    *          description="An error"
+    *      )
+    *  )
+    */
     public function index() {
        
         try {
@@ -41,6 +58,23 @@ class PostController extends Controller
 
     }
 
+    /**
+    *  @OA\Get(
+    *      path="/api/posts-approve-reject",
+    *      summary="Get All Post Data That Needed To Approve/Reject",
+    *      operationId="postsForApproveReject",
+    *      tags={"Post Manage"},
+    *      security={{"sanctum":{}}},
+    *      @OA\Response(
+    *          response=200,
+    *          description="Approved/Rejected"
+    *      ),
+    *      @OA\Response(
+    *          response="default",
+    *          description="An error has occurred."
+    *      )
+    *  )
+    */
     public function postsForApproveReject() {
 
         try {
@@ -68,6 +102,45 @@ class PostController extends Controller
 
     }
     
+    /**
+    * @OA\Post(
+    *   path="/api/posts",
+    *   operationId="store",
+    *   tags={"Post Manage"},
+    *   security={{"sanctum":{}}},
+    *   summary="Create New Post",
+    *   description="Create New Post here",
+    *     @OA\RequestBody(
+    *         @OA\JsonContent(),
+    *         @OA\MediaType(
+    *            mediaType="multipart/form-data",
+    *            @OA\Schema(
+    *               type="object",
+    *               required={"title", "description"},
+    *               @OA\Property(property="title", type="text"),
+    *               @OA\Property(property="description", type="text"),
+    *            ),
+    *        ),
+    *    ),
+    *      @OA\Response(
+    *          response=201,
+    *          description="Register Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="Register Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=422,
+    *          description="Unprocessable Entity",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(response=400, description="Bad request"),
+    *      @OA\Response(response=404, description="Resource Not Found"),
+    * )
+    */
     public function store(Request $request) {
 
         $user_id = Auth::id();
@@ -122,6 +195,33 @@ class PostController extends Controller
         
     }
 
+    /**
+    * @OA\Put(
+    *     path="/api/posts/{id}",
+    *     operationId="update",
+    *     tags={"Post Manage"},
+    *     security={{"sanctum":{}}},
+    *     summary="Update Post",
+    *     description="Update Post",
+    *     @OA\Parameter(name="id", in="path", description="Id of Article", required=true,
+    *         @OA\Schema(type="integer")
+    *     ),
+    *     @OA\RequestBody(
+    *        required=true,
+    *        @OA\JsonContent(
+    *           required={"post_approve_reject_status"},
+    *           @OA\Property(property="post_approve_reject_status", type="string", format="string", example="True/False")
+    *        ),
+    *     ),
+    *     @OA\Response(
+    *          response=200, description="Success",
+    *          @OA\JsonContent(
+    *             @OA\Property(property="status_code", type="integer", example="200"),
+    *             @OA\Property(property="data",type="object")
+    *          )
+    *       )
+    *  )
+    */
     public function update(Request $request, $id) {
 
         $is_admin = Auth::user()->is_admin;
@@ -169,6 +269,30 @@ class PostController extends Controller
 
     }
 
+    /**
+    *  @OA\Get(
+    *      path="/api/posts/search/?search={search-text}",
+    *      summary="Search Post",
+    *      operationId="search",
+    *      tags={"Post Manage"},
+    *      security={{"sanctum":{}}},
+    *      @OA\Parameter(
+    *           description="ID of post",
+    *           in="path",
+    *           name="search-text",
+    *           required=true,
+    *           example="1"
+    *      ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="Post Founded"
+    *      ),
+    *      @OA\Response(
+    *          response="default",
+    *          description="An error has occurred."
+    *      )
+    *  )
+    */
     public function search() {
 
         try {
@@ -208,6 +332,34 @@ class PostController extends Controller
 
     }
 
+    /**
+    *  @OA\Get(
+    *      path="/api/posts/{id}",
+    *      summary="Find Post",
+    *      operationId="show",
+    *      tags={"Post Manage"},
+    *      security={{"sanctum":{}}},
+    *      @OA\Parameter(
+    *      description="ID of post",
+    *      in="path",
+    *      name="id",
+    *      required=true,
+    *      example="1",
+    *      @OA\Schema(
+    *           type="integer",
+    *           format="int64"
+    *     ),
+    *     ),
+    *      @OA\Response(
+    *          response=200,
+    *          description="Post founded"
+    *      ),
+    *      @OA\Response(
+    *          response="default",
+    *          description="An error has occurred."
+    *      )
+    *  )
+    */
     public function show($id) {
         
         try {
@@ -237,6 +389,28 @@ class PostController extends Controller
 
     }
 
+    /**
+    * @OA\Delete(
+    *    path="/api/posts/{id}",
+    *    summary="Delete Posts",
+    *    operationId="destroy",
+    *    security={{"sanctum":{}}},
+    *    tags={"Post Manage"},
+    *    description="Delete Post",
+    *    @OA\Parameter(name="id", in="path", description="Id of Article", required=true,
+    *        @OA\Schema(type="integer")
+    *    ),
+    *    @OA\Response(
+    *         response=200,
+    *         description="Success",
+    *         @OA\JsonContent(
+    *         @OA\Property(property="status_code", type="integer", example="200"),
+    *         @OA\Property(property="data",type="object")
+    *          ),
+    *       )
+    *      )
+    *  )
+    */
     public function destroy($id) {
 
         try {
@@ -262,7 +436,5 @@ class PostController extends Controller
         }
 
     }
-
-
 
 }
