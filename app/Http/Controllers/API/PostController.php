@@ -250,7 +250,7 @@ class PostController extends Controller
                 return response()->json(
                     [
                         'status' => 503,
-                        'message' => '503 Service Unavailable'
+                        'message' => '503 Service Unavailable Only Admin Have This Feature'
                     ],
                 );
              
