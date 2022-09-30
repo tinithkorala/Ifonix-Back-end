@@ -66,12 +66,19 @@ class PostController extends Controller
     *      security={{"sanctum":{}}},
     *      @OA\Response(
     *          response=200,
-    *          description="Approved/Rejected"
+    *          description="Posts that need permission Approved/Rejected"
     *      ),
     *      @OA\Response(
-    *          response="default",
-    *          description="An error has occurred."
-    *      )
+    *          response=500,
+    *          description="Server Error",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="Unauthenticated",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(response=404, description="Resource Not Found"),
     *  )
     */
     public function postsForApproveReject() {
@@ -81,21 +88,13 @@ class PostController extends Controller
             $posts = Post::where('is_approved', false)->where('rejected_at', NULL)->get();
 
             return response()->json([
-                'status' => 200,
-                'message' => 'Posts that need permission',
+                'message' => 'Posts that need permission Approved/Rejected',
                 'data_set' => $posts
-            ]); 
+            ], 200); 
         
         } catch (\Exception $e) {
             
             Log::error($e);
-        
-            return response()->json(
-                [
-                    'status' => 503,
-                    'message' => '503 Service Unavailable'
-                ],
-            );
         
         }
 
@@ -212,13 +211,26 @@ class PostController extends Controller
     *           @OA\Property(property="post_approve_reject_status", type="string", format="string", example="True/False")
     *        ),
     *     ),
-    *     @OA\Response(
-    *          response=200, description="Success",
-    *          @OA\JsonContent(
-    *             @OA\Property(property="status_code", type="integer", example="200"),
-    *             @OA\Property(property="data",type="object")
-    *          )
-    *       )
+    *      @OA\Response(
+    *          response=201,
+    *          description="Post Updated Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=500,
+    *          description="Server Error",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=503,
+    *          description="Service Unavailable",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="Unauthenticated",
+    *          @OA\JsonContent()
+    *       ),
     *  )
     */
     public function update(Request $request, $id) {
@@ -238,31 +250,20 @@ class PostController extends Controller
                 $post->update();
 
                 return response()->json([
-                    'status' => 201,
                     'message' => $post_approve_reject_status ? "Post Approved" : "Post Rejected"
-                ]);
+                ], 201);
 
             }catch (\Exception $e) {
 
                 Log::error($e);
-
-                return response()->json(
-                    [
-                        'status' => 503,
-                        'message' => '503 Service Unavailable Only Admin Have This Feature'
-                    ],
-                );
              
             }
 
         }else {
 
-            return response()->json(
-                [
-                    'status' => 503,
-                    'message' => '503 Service Unavailable'
-                ],
-            );
+            return response()->json([
+                'message' => 'Service Unavailable'
+            ], 503);
 
         }
 
