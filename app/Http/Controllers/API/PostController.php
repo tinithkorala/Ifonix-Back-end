@@ -355,9 +355,20 @@ class PostController extends Controller
     *          description="Post founded"
     *      ),
     *      @OA\Response(
-    *          response="default",
-    *          description="An error has occurred."
-    *      )
+    *          response=500,
+    *          description="Server Error",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=404,
+    *          description="Post Not Found",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="Unauthenticated",
+    *          @OA\JsonContent()
+    *       ),
     *  )
     */
     public function show($id) {
@@ -367,23 +378,20 @@ class PostController extends Controller
             $post = Post::find($id);
             // $post = Post::find($id)->user()->get();
 
-            return response()->json(
-            [
-                'status' => 200,
-                'message' => 'Post Found',
-                'data_set' => $post
-            ]); 
+            if($post) {
+                return response()->json( [
+                    'message' => 'Post Found',
+                    'data_set' => $post
+                ], 200); 
+            }else {
+                return response()->json( [
+                    'message' => 'Post Not Found',
+                ], 404); 
+            }
         
         } catch (\Exception $e) {
             
             Log::error($e);
-        
-            return response()->json(
-                [
-                    'status' => 503,
-                    'message' => '503 Service Unavailable'
-                ],
-            );
         
         }
 
