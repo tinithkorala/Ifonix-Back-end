@@ -133,7 +133,7 @@ class AuthController extends Controller
     *       ),
     *      @OA\Response(
     *          response=401,
-    *          description="Form Validation",
+    *          description="Bad credentials !!!",
     *          @OA\JsonContent()
     *       ),
     *      @OA\Response(response=404, description="Resource Not Found"),

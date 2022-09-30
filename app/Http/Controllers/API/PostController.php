@@ -124,20 +124,24 @@ class PostController extends Controller
     *    ),
     *      @OA\Response(
     *          response=201,
-    *          description="Register Successfully",
+    *          description="Post Created Successfully",
     *          @OA\JsonContent()
     *       ),
     *      @OA\Response(
-    *          response=200,
-    *          description="Register Successfully",
+    *          response=500,
+    *          description="Server Error",
     *          @OA\JsonContent()
     *       ),
     *      @OA\Response(
-    *          response=422,
-    *          description="Unprocessable Entity",
+    *          response=400,
+    *          description="Form Validation",
     *          @OA\JsonContent()
     *       ),
-    *      @OA\Response(response=400, description="Bad request"),
+    *      @OA\Response(
+    *          response=401,
+    *          description="Unauthenticated",
+    *          @OA\JsonContent()
+    *       ),
     *      @OA\Response(response=404, description="Resource Not Found"),
     * )
     */
@@ -147,16 +151,15 @@ class PostController extends Controller
         $is_admin = Auth::user()->is_admin;
         
         $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'description' => 'required',
+            'title' => 'required|min:10',
+            'description' => 'required|min:10',
         ]);
 
         if($validator->fails()) {
 
             return response()->json([
-                'status' => 204,
                 'validation_errors' => $validator->messages(),
-            ]);
+            ], 400);
 
         }else {
 
@@ -171,23 +174,20 @@ class PostController extends Controller
                     'user_id' => $user_id
                 ]);
 
-                return response()->json(
-                    [
-                        'status' => 201,
-                        'message' => 'Post Created'
-                    ],
-                );
+                return response()->json([
+                    'message' => 'Post Created Successfully'
+                ], 201);
           
             } catch (\Exception $e) {
 
                 Log::error($e);
 
-                return response()->json(
-                    [
-                        'status' => 503,
-                        'message' => '503 Service Unavailable'
-                    ],
-                );
+                // return response()->json(
+                //     [
+                //         'status' => 503,
+                //         'message' => '503 Service Unavailable'
+                //     ],
+                // );
              
             }
 
