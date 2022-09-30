@@ -149,7 +149,7 @@ class PostController extends Controller
         $is_admin = Auth::user()->is_admin;
         
         $validator = Validator::make($request->all(), [
-            'title' => 'required|min:10',
+            'title' => 'required|min:3',
             'description' => 'required|min:10',
         ]);
 
@@ -285,12 +285,18 @@ class PostController extends Controller
     *      ),
     *      @OA\Response(
     *          response=200,
-    *          description="Post Founded"
+    *          description="Post founded"
     *      ),
     *      @OA\Response(
-    *          response="default",
-    *          description="An error has occurred."
-    *      )
+    *          response=500,
+    *          description="Server Error",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="Unauthenticated",
+    *          @OA\JsonContent()
+    *       ),
     *  )
     */
     public function search() {
@@ -308,25 +314,16 @@ class PostController extends Controller
 
             if($posts) {
 
-                return response()->json(
-                [
-                    'status' => 200,
+                return response()->json([
                     'message' => 'Posts Found',
                     'data_set' => $posts
-                ]); 
+                ], 200); 
 
             }
 
         }catch (\Exception $e) {
 
             Log::error($e);
-
-            return response()->json(
-                [
-                    'status' => 503,
-                    'message' => '503 Service Unavailable'
-                ],
-            );
          
         }
 
