@@ -197,14 +197,39 @@ class AuthController extends Controller
 
     }
 
+        /**
+    * @OA\Post(
+    * path="/api/logout",
+    * operationId="logout",
+    * security={{"sanctum":{}}},
+    * tags={"Authentication"},
+    * summary="User Logout",
+    * description="User Logout Here",
+    *      @OA\Response(
+    *          response=201,
+    *          description="Logged Out Successfully",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=500,
+    *          description="Server Error",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="Unauthenticated",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(response=404, description="Resource Not Found"),
+    * )
+    */
     public function logout() {
 
         auth()->user()->tokens()->delete();
         
         return response()->json([
-            'status' => 200,
             'message' => 'Logged Out Successfully'
-        ]);
+        ], 201);
 
     }
 
