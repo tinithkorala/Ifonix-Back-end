@@ -118,20 +118,24 @@ class AuthController extends Controller
     *    ),
     *      @OA\Response(
     *          response=201,
-    *          description="Login Successfully",
+    *          description="Logged in Successfully",
     *          @OA\JsonContent()
     *       ),
     *      @OA\Response(
-    *          response=200,
-    *          description="Login Successfully",
+    *          response=500,
+    *          description="Server Error",
     *          @OA\JsonContent()
     *       ),
     *      @OA\Response(
-    *          response=422,
-    *          description="Unprocessable Entity",
+    *          response=400,
+    *          description="Form Validation",
     *          @OA\JsonContent()
     *       ),
-    *      @OA\Response(response=400, description="Bad request"),
+    *      @OA\Response(
+    *          response=401,
+    *          description="Form Validation",
+    *          @OA\JsonContent()
+    *       ),
     *      @OA\Response(response=404, description="Resource Not Found"),
     * )
     */
@@ -145,9 +149,8 @@ class AuthController extends Controller
         if($validator->fails()) {
 
             return response()->json([
-                'status' => 400,
                 'validation_errors' => $validator->messages(),
-            ]);
+            ], 400);
 
         }else {
 
@@ -163,20 +166,19 @@ class AuthController extends Controller
                     $user_token_string = $user_obj->createToken($user_obj->email.'_Token')->plainTextToken;
 
                     return response()->json([
-                        'status' => 200,
                         'user_id' => $user_obj->id,
                         'user_name' => $user_obj->name,
                         'auth_user_type' => $user_obj->is_admin,
                         'token' => $user_token_string,
                         'message' => 'Logged in Successfully !',
-                    ]);
+                    ], 201);
         
                 }else {
         
                     return response()->json([
                         'status' => 401,
                         'message' => 'Bad credentials !!!',
-                    ]);
+                    ], 401);
         
                 }
 
@@ -184,10 +186,10 @@ class AuthController extends Controller
 
                 Log::error($e);
 
-                return response()->json([
-                    'status' => 500,
-                    'message' => 'Something went wrong',
-                ]);
+                // return response()->json([
+                //     'status' => 500,
+                //     'message' => 'Something went wrong',
+                // ]);
 
             }
 
