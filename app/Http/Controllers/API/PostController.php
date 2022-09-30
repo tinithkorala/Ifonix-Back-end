@@ -408,15 +408,20 @@ class PostController extends Controller
     *    @OA\Parameter(name="id", in="path", description="Id of Article", required=true,
     *        @OA\Schema(type="integer")
     *    ),
-    *    @OA\Response(
-    *         response=200,
-    *         description="Success",
-    *         @OA\JsonContent(
-    *         @OA\Property(property="status_code", type="integer", example="200"),
-    *         @OA\Property(property="data",type="object")
-    *          ),
-    *       )
-    *      )
+    *      @OA\Response(
+    *          response=201,
+    *          description="Post Deleted"
+    *      ),
+    *      @OA\Response(
+    *          response=500,
+    *          description="Server Error",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="Unauthenticated",
+    *          @OA\JsonContent()
+    *       ),
     *  )
     */
     public function destroy($id) {
