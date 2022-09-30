@@ -58,24 +58,8 @@
                             }
                         }
                     },
-                    "200": {
-                        "description": "Register Successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        }
-                    },
                     "500": {
-                        "description": "Something went wrong",
+                        "description": "Server Error",
                         "content": {
                             "application/json": {
                                 "schema": {}
@@ -83,7 +67,12 @@
                         }
                     },
                     "400": {
-                        "description": "Bad request"
+                        "description": "Form Validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
                     },
                     "404": {
                         "description": "Resource Not Found"
