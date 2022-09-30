@@ -426,20 +426,12 @@ class PostController extends Controller
             $post_delete = Post::find($id)->delete();
 
             return response()->json([
-                'status' => 201,
                 'message' => 'Post Deleted'
-            ]); 
+            ], 201); 
        
         } catch (\Exception $e) {
             
             Log::error($e);
-
-            return response()->json(
-                [
-                    'status' => 503,
-                    'message' => '503 Service Unavailable'
-                ],
-            );
 
         }
 
