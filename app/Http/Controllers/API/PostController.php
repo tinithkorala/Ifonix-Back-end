@@ -23,12 +23,19 @@ class PostController extends Controller
     *      security={{"sanctum":{}}},
     *      @OA\Response(
     *          response=200,
-    *          description="Post Fetching"
+    *          description="All Posts"
     *      ),
     *      @OA\Response(
-    *          response="default",
-    *          description="An error"
-    *      )
+    *          response=500,
+    *          description="Server Error",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(
+    *          response=401,
+    *          description="Unauthenticated",
+    *          @OA\JsonContent()
+    *       ),
+    *      @OA\Response(response=404, description="Resource Not Found"),
     *  )
     */
     public function index() {
@@ -38,21 +45,13 @@ class PostController extends Controller
             $posts = Post::where('is_approved', true)->get();
 
             return response()->json([
-                'status' => 200,
-                'message' => 'Post all',
+                'message' => 'All Posts',
                 'data_set' => $posts
-            ]); 
+            ], 200); 
         
         } catch (\Exception $e) {
             
             Log::error($e);
-        
-            return response()->json(
-                [
-                    'status' => 503,
-                    'message' => '503 Service Unavailable'
-                ],
-            );
         
         }
 
